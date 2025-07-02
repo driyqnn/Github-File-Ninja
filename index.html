@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub File Ninja by Drae</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        line-height: 1.6;
+        color: #24292f;
+        background: #f6f8fa;
+        min-height: 100vh;
+      }
+
+      .app-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 20px;
+        height: 100vh;
+      }
+
+      .sidebar {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #d1d9e0;
+        padding: 24px;
+        overflow-y: auto;
+      }
+
+      .main-content {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #d1d9e0;
+        padding: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #24292f;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #24292f;
+        margin-bottom: 6px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        background: #ffffff;
+        transition: border-color 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #0969da;
+        box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: #0969da;
+        color: white;
+        border-color: #0969da;
+      }
+
+      .btn-primary:hover {
+        background: #0860ca;
+      }
+
+      .btn-danger {
+        background: #da3633;
+        color: white;
+        border-color: #da3633;
+      }
+
+      .btn-danger:hover {
+        background: #cb2d2a;
+      }
+
+      .btn-secondary {
+        background: #f6f8fa;
+        color: #24292f;
+        border-color: #d1d9e0;
+      }
+
+      .btn-secondary:hover {
+        background: #f3f4f6;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .repo-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        margin-bottom: 16px;
+      }
+
+      .repo-item {
+        padding: 12px;
+        border-bottom: 1px solid #d1d9e0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .repo-item:last-child {
+        border-bottom: none;
+      }
+
+      .repo-item:hover {
+        background: #f6f8fa;
+      }
+
+      .repo-item.selected {
+        background: #dbeafe;
+        border-color: #0969da;
+      }
+
+      .repo-name {
+        font-weight: 500;
+        color: #24292f;
+      }
+
+      .repo-meta {
+        font-size: 12px;
+        color: #656d76;
+        margin-top: 4px;
+      }
+
+      .file-tree {
+        flex: 1;
+        overflow-y: auto;
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        padding: 16px;
+        background: #fafbfc;
+      }
+
+      .tree-item {
+        margin: 2px 0;
+      }
+
+      .tree-folder,
+      .tree-file {
+        display: flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .tree-folder:hover,
+      .tree-file:hover {
+        background: #f6f8fa;
+      }
+
+      .tree-folder {
+        font-weight: 500;
+        color: #0969da;
+      }
+
+      .tree-file {
+        color: #24292f;
+      }
+
+      .tree-children {
+        margin-left: 20px;
+        border-left: 1px solid #d1d9e0;
+        padding-left: 12px;
+      }
+
+      .tree-children.collapsed {
+        display: none;
+      }
+
+      .checkbox {
+        margin-right: 8px;
+        transform: scale(1.1);
+      }
+
+      .file-info {
+        margin-left: auto;
+        font-size: 12px;
+        color: #656d76;
+      }
+
+      .selection-info {
+        background: #dbeafe;
+        border: 1px solid #0969da;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 16px;
+        font-size: 14px;
+        color: #0969da;
+      }
+
+      .action-bar {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #d1d9e0;
+      }
+
+      .status-panel {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        padding: 16px;
+        background: #fafbfc;
+        margin-top: 16px;
+      }
+
+      .status-item {
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 4px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
+
+      .status-error {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+      }
+
+      .status-pending {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fde68a;
+      }
+
+      .loading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #656d76;
+        font-size: 14px;
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e5e7eb;
+        border-top: 2px solid #0969da;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .error {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 12px;
+        margin: 16px 0;
+      }
+
+      @media (max-width: 1024px) {
+        .app-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr;
+          height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="section-title">🔑 GitHub Token</div>
+        <div class="form-group">
+          <label for="token" class="form-label">Personal Access Token</label>
+          <input
+            type="password"
+            id="token"
+            class="form-input"
+            placeholder="ghp_..." />
+        </div>
+        <button
+          class="btn btn-primary"
+          onclick="loadRepositories()"
+          style="width: 100%; margin-bottom: 24px">
+          Load Repositories
+        </button>
+
+        <div class="section-title">📁 Repositories</div>
+        <div class="loading hidden" id="repo-loading">
+          <div class="spinner"></div>
+          Loading repositories...
+        </div>
+        <div class="repo-list" id="repo-list"></div>
+
+        <div class="form-group">
+          <label for="branch" class="form-label">Branch</label>
+          <input
+            type="text"
+            id="branch"
+            class="form-input"
+            value="main"
+            placeholder="main" />
+        </div>
+        <button
+          class="btn btn-primary"
+          onclick="loadFileTree()"
+          id="load-tree-btn"
+          disabled
+          style="width: 100%">
+          Load Files
+        </button>
+
+        <div style="margin-top: 24px">
+          <div class="section-title">⚡ Quick Actions</div>
+          <button
+            class="btn btn-secondary"
+            onclick="selectAll()"
+            style="width: 100%; margin-bottom: 8px">
+            Select All Files
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="clearSelection()"
+            style="width: 100%; margin-bottom: 8px">
+            Clear Selection
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="expandAll()"
+            style="width: 100%; margin-bottom: 8px">
+            Expand All
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="section-title">🗂️ Repository Files</div>
+
+        <div class="loading hidden" id="tree-loading">
+          <div class="spinner"></div>
+          Loading file tree...
+        </div>
+
+        <div id="selection-info" class="selection-info hidden">
+          <strong>Selected:</strong> <span id="selected-count">0</span> files
+        </div>
+
+        <div class="file-tree" id="file-tree">
+          <div style="text-align: center; color: #656d76; padding: 40px">
+            Enter your GitHub token and select a repository to get started
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <input
+            type="text"
+            id="commit-message"
+            class="form-input"
+            placeholder="Delete selected files"
+            style="flex: 1" />
+          <button
+            class="btn btn-danger"
+            onclick="deleteSelectedFiles()"
+            id="delete-btn"
+            disabled>
+            🗑️ Delete Files
+          </button>
+        </div>
+
+        <div class="status-panel hidden" id="status-panel"></div>
+      </div>
+    </div>
+
+    <script>
+      // Global state
+      let repositoryData = {};
+      let selectedFiles = new Set();
+      let githubToken = "";
+      let selectedRepository = null;
+
+      // GitHub API helper
+      async function makeGitHubRequest(url, options = {}) {
+        const headers = {
+          Authorization: `token ${githubToken}`,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "GitHub-File-Deleter",
+          ...options.headers,
+        };
+
+        const response = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            `GitHub API Error: ${response.status} - ${
+              errorData.message || response.statusText
+            }`
+          );
+        }
+
+        return response.json();
+      }
+
+      // Load repositories
+      async function loadRepositories() {
+        const token = document.getElementById("token").value.trim();
+        if (!token) {
+          showError("Please enter your GitHub token");
+          return;
+        }
+
+        githubToken = token;
+
+        const loading = document.getElementById("repo-loading");
+        const repoList = document.getElementById("repo-list");
+
+        loading.classList.remove("hidden");
+        repoList.innerHTML = "";
+
+        try {
+          const repos = await makeGitHubRequest(
+            "https://api.github.com/user/repos?type=all&sort=updated&per_page=100"
+          );
+
+          repos.forEach((repo) => {
+            const repoItem = document.createElement("div");
+            repoItem.className = "repo-item";
+            repoItem.onclick = () => selectRepository(repo, repoItem);
+
+            repoItem.innerHTML = `
+                        <div class="repo-name">${repo.name}</div>
+                        <div class="repo-meta">
+                            ${repo.private ? "Private" : "Public"} • 
+                            ${repo.language || "No language"} • 
+                            Updated ${new Date(
+                              repo.updated_at
+                            ).toLocaleDateString()}
+                        </div>
+                    `;
+
+            repoList.appendChild(repoItem);
+          });
+
+          loading.classList.add("hidden");
+        } catch (error) {
+          loading.classList.add("hidden");
+          showError(`Failed to load repositories: ${error.message}`);
+        }
+      }
+
+      // Select repository
+      function selectRepository(repo, element) {
+        document.querySelectorAll(".repo-item").forEach((item) => {
+          item.classList.remove("selected");
+        });
+
+        element.classList.add("selected");
+        selectedRepository = repo;
+        document.getElementById("load-tree-btn").disabled = false;
+      }
+
+      // Load file tree
+      async function loadFileTree() {
+        if (!selectedRepository) return;
+
+        const branch = document.getElementById("branch").value.trim() || "main";
+        const loading = document.getElementById("tree-loading");
+        const fileTree = document.getElementById("file-tree");
+
+        loading.classList.remove("hidden");
+        fileTree.innerHTML = "";
+
+        try {
+          const url = `https://api.github.com/repos/${selectedRepository.full_name}/git/trees/${branch}?recursive=1`;
+          const treeData = await makeGitHubRequest(url);
+
+          repositoryData = {
+            owner: selectedRepository.owner.login,
+            repo: selectedRepository.name,
+            branch,
+            tree: treeData.tree,
+          };
+
+          renderFileTree(treeData.tree);
+          loading.classList.add("hidden");
+
+          // Auto-expand all folders
+          setTimeout(() => {
+            expandAll();
+          }, 100);
+        } catch (error) {
+          loading.classList.add("hidden");
+          showError(`Failed to load files: ${error.message}`);
+        }
+      }
+
+      // Render file tree
+      function renderFileTree(tree) {
+        const fileTree = document.getElementById("file-tree");
+        const fileStructure = buildFileStructure(tree);
+        fileTree.innerHTML = renderTreeNode(fileStructure);
+      }
+
+      // Build file structure
+      function buildFileStructure(tree) {
+        const structure = {};
+
+        tree.forEach((item) => {
+          const parts = item.path.split("/");
+          let current = structure;
+
+          for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+
+            if (i === parts.length - 1) {
+              if (item.type === "blob") {
+                current[part] = {
+                  type: "blob",
+                  path: item.path,
+                  sha: item.sha,
+                  size: item.size,
+                  isFile: true,
+                };
+              } else {
+                if (!current[part]) {
+                  current[part] = {
+                    type: "tree",
+                    children: {},
+                    isFile: false,
+                    path: item.path,
+                  };
+                }
+              }
+            } else {
+              if (!current[part]) {
+                current[part] = {
+                  type: "tree",
+                  children: {},
+                  isFile: false,
+                  path: parts.slice(0, i + 1).join("/"),
+                };
+              }
+              current = current[part].children;
+            }
+          }
+        });
+
+        return structure;
+      }
+
+      // Render tree node
+      function renderTreeNode(node, level = 0) {
+        let html = "";
+
+        const entries = Object.keys(node).sort((a, b) => {
+          const aIsFile = node[a].isFile;
+          const bIsFile = node[b].isFile;
+
+          if (aIsFile === bIsFile) {
+            return a.localeCompare(b);
+          }
+          return aIsFile ? 1 : -1;
+        });
+
+        entries.forEach((key) => {
+          const item = node[key];
+          const indent = "margin-left: " + level * 20 + "px;";
+
+          if (item.isFile) {
+            const sizeInfo = item.size ? formatBytes(item.size) : "";
+            const fileIcon = getFileIcon(item.path);
+            html += `
+                        <div class="tree-item" style="${indent}">
+                            <div class="tree-file">
+                                <input type="checkbox" class="checkbox" data-path="${item.path}" data-sha="${item.sha}" onchange="updateSelection()">
+                                <span>${fileIcon} ${key}</span>
+                                <span class="file-info">${sizeInfo}</span>
+                            </div>
+                        </div>
+                    `;
+          } else {
+            const folderId =
+              "folder-" + Math.random().toString(36).substr(2, 9);
+            const folderPath = item.path || key;
+            const hasChildren =
+              item.children && Object.keys(item.children).length > 0;
+
+            html += `
+                        <div class="tree-item" style="${indent}">
+                            <div class="tree-folder" onclick="toggleFolder('${folderId}')">
+                                <input type="checkbox" class="checkbox folder-checkbox" data-folder="${folderPath}" onchange="updateFolderSelection(this)" onclick="event.stopPropagation()">
+                                <span>📁 ${key}/</span>
+                                ${
+                                  hasChildren
+                                    ? '<span class="file-info">(' +
+                                      countFiles(item.children) +
+                                      " items)</span>"
+                                    : ""
+                                }
+                            </div>
+                            <div class="tree-children" id="${folderId}">
+                                ${
+                                  hasChildren
+                                    ? renderTreeNode(item.children, level + 1)
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                    `;
+          }
+        });
+
+        return html;
+      }
+
+      // Helper functions
+      function countFiles(node) {
+        let count = 0;
+        Object.keys(node).forEach((key) => {
+          if (node[key].isFile) {
+            count++;
+          } else if (node[key].children) {
+            count += countFiles(node[key].children);
+          }
+        });
+        return count;
+      }
+
+      function getFileIcon(path) {
+        const ext = path.split(".").pop().toLowerCase();
+        const iconMap = {
+          js: "🟨",
+          ts: "🔷",
+          jsx: "⚛️",
+          tsx: "⚛️",
+          html: "🌐",
+          css: "🎨",
+          json: "📄",
+          md: "📝",
+          png: "🖼️",
+          jpg: "🖼️",
+          gif: "🖼️",
+          svg: "🖼️",
+          zip: "📦",
+          env: "⚙️",
+        };
+        return iconMap[ext] || "📄";
+      }
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 B";
+        const k = 1024;
+        const sizes = ["B", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+      }
+
+      function toggleFolder(folderId) {
+        const folder = document.getElementById(folderId);
+        folder.classList.toggle("collapsed");
+      }
+
+      function updateSelection() {
+        selectedFiles.clear();
+
+        const fileCheckboxes = document.querySelectorAll("input[data-path]");
+        fileCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            selectedFiles.add({
+              path: checkbox.dataset.path,
+              sha: checkbox.dataset.sha,
+            });
+          }
+        });
+
+        updateSelectionDisplay();
+      }
+
+      function updateFolderSelection(folderCheckbox) {
+        const isChecked = folderCheckbox.checked;
+        const folderElement = folderCheckbox.closest(".tree-item");
+        const childrenContainer = folderElement.querySelector(".tree-children");
+
+        if (childrenContainer) {
+          const childFileCheckboxes =
+            childrenContainer.querySelectorAll("input[data-path]");
+          childFileCheckboxes.forEach((checkbox) => {
+            checkbox.checked = isChecked;
+          });
+
+          const nestedFolderCheckboxes =
+            childrenContainer.querySelectorAll(".folder-checkbox");
+          nestedFolderCheckboxes.forEach((checkbox) => {
+            checkbox.checked = isChecked;
+          });
+        }
+
+        updateSelection();
+      }
+
+      function updateSelectionDisplay() {
+        const count = selectedFiles.size;
+        document.getElementById("selected-count").textContent = count;
+
+        const selectionInfo = document.getElementById("selection-info");
+        const deleteBtn = document.getElementById("delete-btn");
+
+        if (count > 0) {
+          selectionInfo.classList.remove("hidden");
+          deleteBtn.disabled = false;
+        } else {
+          selectionInfo.classList.add("hidden");
+          deleteBtn.disabled = true;
+        }
+      }
+
+      function selectAll() {
+        const allCheckboxes = document.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        allCheckboxes.forEach((checkbox) => {
+          checkbox.checked = true;
+        });
+        updateSelection();
+      }
+
+      function clearSelection() {
+        const allCheckboxes = document.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        allCheckboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+        updateSelection();
+      }
+
+      function expandAll() {
+        const allFolders = document.querySelectorAll(".tree-children");
+        allFolders.forEach((folder) => {
+          folder.classList.remove("collapsed");
+        });
+      }
+
+      // Delete selected files
+      async function deleteSelectedFiles() {
+        if (selectedFiles.size === 0) {
+          showError("No files selected for deletion");
+          return;
+        }
+
+        const commitMessage =
+          document.getElementById("commit-message").value.trim() ||
+          "Delete selected files";
+
+        if (
+          !confirm(
+            `Delete ${selectedFiles.size} file(s)? This cannot be undone!`
+          )
+        ) {
+          return;
+        }
+
+        const statusPanel = document.getElementById("status-panel");
+        statusPanel.classList.remove("hidden");
+        statusPanel.innerHTML = "";
+
+        const filesToDelete = Array.from(selectedFiles);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const file of filesToDelete) {
+          const statusId = addStatusItem(file.path, "pending", "Deleting...");
+
+          try {
+            await deleteFile(file.path, file.sha, commitMessage);
+            updateStatusItem(statusId, "success", "Deleted successfully");
+            successCount++;
+          } catch (error) {
+            updateStatusItem(statusId, "error", `Failed: ${error.message}`);
+            errorCount++;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        addStatusItem(
+          "SUMMARY",
+          successCount > 0 ? "success" : "error",
+          `Completed: ${successCount} deleted, ${errorCount} failed`
+        );
+
+        if (successCount > 0) {
+          setTimeout(() => {
+            loadFileTree();
+          }, 2000);
+        }
+      }
+
+      async function deleteFile(path, sha, message) {
+        const url = `https://api.github.com/repos/${repositoryData.owner}/${repositoryData.repo}/contents/${path}`;
+
+        await makeGitHubRequest(url, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: message,
+            sha: sha,
+            branch: repositoryData.branch,
+          }),
+        });
+      }
+
+      function addStatusItem(filename, type, message) {
+        const statusPanel = document.getElementById("status-panel");
+        const statusId =
+          "status-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substr(2, 5);
+
+        const statusElement = document.createElement("div");
+        statusElement.className = `status-item status-${type}`;
+        statusElement.id = statusId;
+        statusElement.innerHTML = `
+                <strong>${filename}</strong>
+                <span>${message}</span>
+            `;
+
+        statusPanel.appendChild(statusElement);
+        statusPanel.scrollTop = statusPanel.scrollHeight;
+
+        return statusId;
+      }
+
+      function updateStatusItem(statusId, type, message) {
+        const element = document.getElementById(statusId);
+        if (element) {
+          element.className = `status-item status-${type}`;
+          const messageSpan = element.querySelector("span");
+          if (messageSpan) {
+            messageSpan.textContent = message;
+          }
+        }
+      }
+
+      function showError(message) {
+        const existingErrors = document.querySelectorAll(".error");
+        existingErrors.forEach((error) => error.remove());
+
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error";
+        errorDiv.textContent = message;
+
+        document.body.appendChild(errorDiv);
+
+        setTimeout(() => {
+          if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+          }
+        }, 5000);
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("GitHub File Deleter loaded successfully");
+      });
+    </script>
+  </body>
+</html>
