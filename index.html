@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitHub File Ninja by Drae</title>
     <style>
+      :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --border-primary: #30363d;
+        --border-secondary: #21262d;
+        --text-primary: #e6edf3;
+        --text-secondary: #7d8590;
+        --text-muted: #656d76;
+        --accent-primary: #238636;
+        --accent-secondary: #1f6feb;
+        --accent-danger: #da3633;
+        --accent-warning: #fb8500;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+        --gradient-primary: linear-gradient(135deg, #238636, #2ea043);
+        --gradient-secondary: linear-gradient(135deg, #1f6feb, #2d7ff9);
+        --gradient-danger: linear-gradient(135deg, #da3633, #f85149);
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -13,11 +33,12 @@
 
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          sans-serif;
+          "Helvetica Neue", sans-serif;
         line-height: 1.6;
-        color: #24292f;
-        background: #f6f8fa;
+        color: var(--text-primary);
+        background: var(--bg-primary);
         min-height: 100vh;
+        overflow-x: hidden;
       }
 
       .app-container {
@@ -25,129 +46,241 @@
         margin: 0 auto;
         padding: 20px;
         display: grid;
-        grid-template-columns: 350px 1fr;
-        gap: 20px;
-        height: 100vh;
+        grid-template-columns: 380px 1fr;
+        gap: 24px;
+        min-height: 100vh;
       }
 
       .sidebar {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #d1d9e0;
-        padding: 24px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-primary);
+        padding: 28px;
         overflow-y: auto;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        max-height: calc(100vh - 40px);
       }
 
       .main-content {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #d1d9e0;
-        padding: 24px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-primary);
+        padding: 28px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+        min-height: calc(100vh - 40px);
       }
 
       .section-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #24292f;
-        margin-bottom: 16px;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
+        background: var(--gradient-secondary);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .section-title .emoji {
+        -webkit-text-fill-color: initial;
+        filter: drop-shadow(0 0 8px rgba(31, 111, 235, 0.3));
+      }
+
+      .app-header {
+        text-align: center;
+        margin-bottom: 32px;
+        padding: 24px;
+        background: var(--bg-tertiary);
+        border-radius: 12px;
+        border: 1px solid var(--border-primary);
+      }
+
+      .app-title {
+        font-size: 24px;
+        font-weight: 800;
+        background: var(--gradient-primary);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+
+      .app-subtitle {
+        color: var(--text-secondary);
+        font-size: 14px;
       }
 
       .form-group {
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
 
       .form-label {
         display: block;
         font-size: 14px;
-        font-weight: 500;
-        color: #24292f;
-        margin-bottom: 6px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
       }
 
       .form-input {
         width: 100%;
-        padding: 8px 12px;
+        padding: 12px 16px;
         font-size: 14px;
-        border: 1px solid #d1d9e0;
-        border-radius: 6px;
-        background: #ffffff;
-        transition: border-color 0.2s;
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
       }
 
       .form-input:focus {
         outline: none;
-        border-color: #0969da;
-        box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.1);
+        background: var(--bg-secondary);
+      }
+
+      .form-input::placeholder {
+        color: var(--text-muted);
       }
 
       .btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         border: 1px solid transparent;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
         text-decoration: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .btn:hover::before {
+        left: 100%;
       }
 
       .btn-primary {
-        background: #0969da;
+        background: var(--gradient-primary);
         color: white;
-        border-color: #0969da;
+        box-shadow: 0 4px 16px rgba(35, 134, 54, 0.3);
       }
 
       .btn-primary:hover {
-        background: #0860ca;
-      }
-
-      .btn-danger {
-        background: #da3633;
-        color: white;
-        border-color: #da3633;
-      }
-
-      .btn-danger:hover {
-        background: #cb2d2a;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(35, 134, 54, 0.4);
       }
 
       .btn-secondary {
-        background: #f6f8fa;
-        color: #24292f;
-        border-color: #d1d9e0;
+        background: var(--gradient-secondary);
+        color: white;
+        box-shadow: 0 4px 16px rgba(31, 111, 235, 0.3);
       }
 
       .btn-secondary:hover {
-        background: #f3f4f6;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(31, 111, 235, 0.4);
+      }
+
+      .btn-danger {
+        background: var(--gradient-danger);
+        color: white;
+        box-shadow: 0 4px 16px rgba(218, 54, 51, 0.3);
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(218, 54, 51, 0.4);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-primary);
+        border-color: var(--border-primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--accent-secondary);
       }
 
       .btn:disabled {
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
       }
 
-      .repo-list {
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid #d1d9e0;
-        border-radius: 6px;
+      .btn-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .token-helper {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        padding: 16px;
         margin-bottom: 16px;
       }
 
+      .token-helper-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .repo-list {
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        margin-bottom: 20px;
+        background: var(--bg-tertiary);
+      }
+
       .repo-item {
-        padding: 12px;
-        border-bottom: 1px solid #d1d9e0;
+        padding: 16px;
+        border-bottom: 1px solid var(--border-secondary);
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: all 0.3s ease;
+        position: relative;
       }
 
       .repo-item:last-child {
@@ -155,32 +288,51 @@
       }
 
       .repo-item:hover {
-        background: #f6f8fa;
+        background: var(--bg-secondary);
+        transform: translateX(4px);
       }
 
       .repo-item.selected {
-        background: #dbeafe;
-        border-color: #0969da;
+        background: var(--bg-secondary);
+        border-left: 4px solid var(--accent-primary);
+        box-shadow: inset 0 0 0 1px rgba(35, 134, 54, 0.2);
       }
 
       .repo-name {
-        font-weight: 500;
-        color: #24292f;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
       }
 
       .repo-meta {
         font-size: 12px;
-        color: #656d76;
-        margin-top: 4px;
+        color: var(--text-secondary);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .repo-badge {
+        background: var(--accent-secondary);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .repo-badge.private {
+        background: var(--accent-warning);
       }
 
       .file-tree {
         flex: 1;
         overflow-y: auto;
-        border: 1px solid #d1d9e0;
-        border-radius: 6px;
-        padding: 16px;
-        background: #fafbfc;
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        padding: 20px;
+        background: var(--bg-tertiary);
+        min-height: 400px;
       }
 
       .tree-item {
@@ -191,31 +343,50 @@
       .tree-file {
         display: flex;
         align-items: center;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 8px 12px;
+        border-radius: 6px;
         font-size: 14px;
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: all 0.2s ease;
+        position: relative;
       }
 
       .tree-folder:hover,
       .tree-file:hover {
-        background: #f6f8fa;
+        background: var(--bg-secondary);
+        transform: translateX(2px);
       }
 
       .tree-folder {
-        font-weight: 500;
-        color: #0969da;
+        font-weight: 600;
+        color: var(--accent-secondary);
       }
 
       .tree-file {
-        color: #24292f;
+        color: var(--text-primary);
       }
 
       .tree-children {
-        margin-left: 20px;
-        border-left: 1px solid #d1d9e0;
-        padding-left: 12px;
+        margin-left: 24px;
+        border-left: 2px solid var(--border-secondary);
+        padding-left: 16px;
+        position: relative;
+      }
+
+      .tree-children::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--accent-primary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .tree-children:hover::before {
+        opacity: 0.3;
       }
 
       .tree-children.collapsed {
@@ -223,85 +394,113 @@
       }
 
       .checkbox {
-        margin-right: 8px;
-        transform: scale(1.1);
+        margin-right: 12px;
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent-primary);
+        cursor: pointer;
       }
 
       .file-info {
         margin-left: auto;
-        font-size: 12px;
-        color: #656d76;
+        font-size: 11px;
+        color: var(--text-muted);
+        background: var(--bg-secondary);
+        padding: 2px 6px;
+        border-radius: 4px;
       }
 
       .selection-info {
-        background: #dbeafe;
-        border: 1px solid #0969da;
-        border-radius: 6px;
-        padding: 12px;
-        margin-bottom: 16px;
+        background: linear-gradient(
+          135deg,
+          rgba(35, 134, 54, 0.1),
+          rgba(35, 134, 54, 0.05)
+        );
+        border: 1px solid rgba(35, 134, 54, 0.3);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 20px;
         font-size: 14px;
-        color: #0969da;
+        color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
 
       .action-bar {
         display: flex;
-        gap: 8px;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #d1d9e0;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-primary);
       }
 
       .status-panel {
-        max-height: 300px;
+        max-height: 320px;
         overflow-y: auto;
-        border: 1px solid #d1d9e0;
-        border-radius: 6px;
-        padding: 16px;
-        background: #fafbfc;
-        margin-top: 16px;
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        padding: 20px;
+        background: var(--bg-tertiary);
+        margin-top: 20px;
       }
 
       .status-item {
-        padding: 8px 12px;
-        margin: 4px 0;
-        border-radius: 4px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        border-radius: 6px;
         font-size: 14px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
+        transition: all 0.3s ease;
       }
 
       .status-success {
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #bbf7d0;
+        background: linear-gradient(
+          135deg,
+          rgba(35, 134, 54, 0.1),
+          rgba(35, 134, 54, 0.05)
+        );
+        color: var(--accent-primary);
+        border: 1px solid rgba(35, 134, 54, 0.3);
       }
 
       .status-error {
-        background: #fef2f2;
-        color: #dc2626;
-        border: 1px solid #fecaca;
+        background: linear-gradient(
+          135deg,
+          rgba(218, 54, 51, 0.1),
+          rgba(218, 54, 51, 0.05)
+        );
+        color: var(--accent-danger);
+        border: 1px solid rgba(218, 54, 51, 0.3);
       }
 
       .status-pending {
-        background: #fef3c7;
-        color: #d97706;
-        border: 1px solid #fde68a;
+        background: linear-gradient(
+          135deg,
+          rgba(251, 133, 0, 0.1),
+          rgba(251, 133, 0, 0.05)
+        );
+        color: var(--accent-warning);
+        border: 1px solid rgba(251, 133, 0, 0.3);
       }
 
       .loading {
         display: flex;
         align-items: center;
-        gap: 8px;
-        color: #656d76;
+        justify-content: center;
+        gap: 12px;
+        color: var(--text-secondary);
         font-size: 14px;
+        padding: 20px;
       }
 
       .spinner {
-        width: 16px;
-        height: 16px;
-        border: 2px solid #e5e7eb;
-        border-top: 2px solid #0969da;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border-primary);
+        border-top: 2px solid var(--accent-secondary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
@@ -315,25 +514,142 @@
         }
       }
 
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
       .hidden {
         display: none;
       }
 
       .error {
-        background: #fef2f2;
-        color: #dc2626;
-        border: 1px solid #fecaca;
-        border-radius: 6px;
+        background: var(--gradient-danger);
+        color: white;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        box-shadow: var(--shadow-lg);
+        max-width: 400px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .stats-bar {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
         padding: 12px;
-        margin: 16px 0;
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        border: 1px solid var(--border-primary);
+      }
+
+      .stat-item {
+        text-align: center;
+        flex: 1;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--accent-primary);
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       @media (max-width: 1024px) {
         .app-container {
           grid-template-columns: 1fr;
           grid-template-rows: auto 1fr;
+          gap: 16px;
+          padding: 16px;
+        }
+
+        .sidebar {
+          position: relative;
+          top: 0;
+          max-height: none;
           height: auto;
         }
+
+        .quick-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .app-container {
+          padding: 12px;
+        }
+
+        .sidebar,
+        .main-content {
+          padding: 20px;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .action-bar {
+          flex-direction: column;
+        }
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-primary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
       }
     </style>
   </head>
@@ -341,23 +657,43 @@
     <div class="app-container">
       <!-- Sidebar -->
       <div class="sidebar">
-        <div class="section-title">🔑 GitHub Token</div>
+        <div class="app-header">
+          <div class="app-title">🥷 GitHub File Ninja</div>
+          <div class="app-subtitle">Mass file deletion made simple</div>
+        </div>
+
+        <div class="section-title">
+          <span class="emoji">🔑</span> Authentication
+        </div>
+
+        <div class="token-helper">
+          <div class="token-helper-title"> <span>ℹ️</span> Need a token? </div>
+          <button
+            class="btn btn-outline"
+            onclick="generateToken()"
+            style="width: 100%; font-size: 12px">
+            🔗 Create GitHub Token
+          </button>
+        </div>
+
         <div class="form-group">
           <label for="token" class="form-label">Personal Access Token</label>
           <input
             type="password"
             id="token"
             class="form-input"
-            placeholder="ghp_..." />
+            placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
         </div>
         <button
           class="btn btn-primary"
           onclick="loadRepositories()"
-          style="width: 100%; margin-bottom: 24px">
-          Load Repositories
+          style="width: 100%; margin-bottom: 28px">
+          <span>🚀</span> Load Repositories
         </button>
 
-        <div class="section-title">📁 Repositories</div>
+        <div class="section-title">
+          <span class="emoji">📁</span> Repositories
+        </div>
         <div class="loading hidden" id="repo-loading">
           <div class="spinner"></div>
           Loading repositories...
@@ -374,40 +710,53 @@
             placeholder="main" />
         </div>
         <button
-          class="btn btn-primary"
+          class="btn btn-secondary"
           onclick="loadFileTree()"
           id="load-tree-btn"
           disabled
-          style="width: 100%">
-          Load Files
+          style="width: 100%; margin-bottom: 20px">
+          <span>📂</span> Load Files
         </button>
 
-        <div style="margin-top: 24px">
-          <div class="section-title">⚡ Quick Actions</div>
-          <button
-            class="btn btn-secondary"
-            onclick="selectAll()"
-            style="width: 100%; margin-bottom: 8px">
-            Select All Files
+        <div class="section-title">
+          <span class="emoji">⚡</span> Quick Actions
+        </div>
+        <div class="quick-actions">
+          <button class="btn btn-outline" onclick="selectAll()">
+            <span>✅</span> Select All
           </button>
-          <button
-            class="btn btn-secondary"
-            onclick="clearSelection()"
-            style="width: 100%; margin-bottom: 8px">
-            Clear Selection
+          <button class="btn btn-outline" onclick="clearSelection()">
+            <span>❌</span> Clear All
           </button>
-          <button
-            class="btn btn-secondary"
-            onclick="expandAll()"
-            style="width: 100%; margin-bottom: 8px">
-            Expand All
+          <button class="btn btn-outline" onclick="expandAll()">
+            <span>📤</span> Expand All
+          </button>
+          <button class="btn btn-outline" onclick="collapseAll()">
+            <span>📥</span> Collapse All
           </button>
         </div>
       </div>
 
       <!-- Main Content -->
       <div class="main-content">
-        <div class="section-title">🗂️ Repository Files</div>
+        <div class="section-title">
+          <span class="emoji">🗂️</span> Repository Files
+        </div>
+
+        <div class="stats-bar hidden" id="stats-bar">
+          <div class="stat-item">
+            <span class="stat-value" id="total-files">0</span>
+            <span class="stat-label">Total Files</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="selected-files">0</span>
+            <span class="stat-label">Selected</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="total-size">0</span>
+            <span class="stat-label">Total Size</span>
+          </div>
+        </div>
 
         <div class="loading hidden" id="tree-loading">
           <div class="spinner"></div>
@@ -415,12 +764,30 @@
         </div>
 
         <div id="selection-info" class="selection-info hidden">
-          <strong>Selected:</strong> <span id="selected-count">0</span> files
+          <span>🎯</span>
+          <div>
+            <strong>Ready to delete:</strong>
+            <span id="selected-count">0</span> files
+          </div>
         </div>
 
         <div class="file-tree" id="file-tree">
-          <div style="text-align: center; color: #656d76; padding: 40px">
-            Enter your GitHub token and select a repository to get started
+          <div
+            style="
+              text-align: center;
+              color: var(--text-secondary);
+              padding: 60px 20px;
+            ">
+            <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5"
+              >🥷</div
+            >
+            <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px"
+              >Ready to ninja some files?</div
+            >
+            <div style="font-size: 14px"
+              >Enter your GitHub token and select a repository to get
+              started</div
+            >
           </div>
         </div>
 
@@ -429,14 +796,14 @@
             type="text"
             id="commit-message"
             class="form-input"
-            placeholder="Delete selected files"
+            placeholder="🗑️ Ninja cleanup: Remove selected files"
             style="flex: 1" />
           <button
             class="btn btn-danger"
             onclick="deleteSelectedFiles()"
             id="delete-btn"
             disabled>
-            🗑️ Delete Files
+            <span>🗑️</span> Delete Files
           </button>
         </div>
 
@@ -450,34 +817,84 @@
       let selectedFiles = new Set();
       let githubToken = "";
       let selectedRepository = null;
+      let fileStats = { total: 0, totalSize: 0, selectedSize: 0 };
+      let isProcessing = false;
 
-      // GitHub API helper
-      async function makeGitHubRequest(url, options = {}) {
+      // Generate random token name and open GitHub token creation page
+      function generateToken() {
+        const randomNum = Math.floor(Math.random() * 9000) + 1000;
+        const tokenName = `GitHub File Ninja Token ${randomNum}`;
+        const encodedName = encodeURIComponent(tokenName);
+        const githubUrl = `https://github.com/settings/tokens/new?description=${encodedName}&scopes=repo,delete_repo`;
+
+        window.open(githubUrl, "_blank");
+        showMessage(
+          'Token generation page opened! Create your token with "repo" permissions and paste it here.',
+          "info"
+        );
+      }
+
+      // Enhanced GitHub API helper with retry logic
+      async function makeGitHubRequest(url, options = {}, retries = 3) {
         const headers = {
           Authorization: `token ${githubToken}`,
           Accept: "application/vnd.github.v3+json",
-          "User-Agent": "GitHub-File-Deleter",
+          "User-Agent": "GitHub-File-Ninja",
           ...options.headers,
         };
 
-        const response = await fetch(url, {
-          ...options,
-          headers,
-        });
+        for (let attempt = 1; attempt <= retries; attempt++) {
+          try {
+            const response = await fetch(url, {
+              ...options,
+              headers,
+            });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            `GitHub API Error: ${response.status} - ${
-              errorData.message || response.statusText
-            }`
-          );
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+
+              // Handle rate limiting
+              if (
+                response.status === 403 &&
+                response.headers.get("X-RateLimit-Remaining") === "0"
+              ) {
+                const resetTime = new Date(
+                  response.headers.get("X-RateLimit-Reset") * 1000
+                );
+                throw new Error(
+                  `Rate limit exceeded. Resets at ${resetTime.toLocaleTimeString()}`
+                );
+              }
+
+              throw new Error(
+                `GitHub API Error: ${response.status} - ${
+                  errorData.message || response.statusText
+                }`
+              );
+            }
+
+            return response.json();
+          } catch (error) {
+            if (attempt === retries) throw error;
+
+            // Exponential backoff for retries
+            const delay = Math.pow(2, attempt) * 1000;
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
         }
-
-        return response.json();
       }
 
-      // Load repositories
+      // Validate GitHub token format
+      function validateToken(token) {
+        const patterns = [
+          /^ghp_[a-zA-Z0-9]{36}$/, // Personal access token
+          /^gho_[a-zA-Z0-9]{36}$/, // OAuth token
+          /^ghu_[a-zA-Z0-9]{36}$/, // User token
+        ];
+        return patterns.some((pattern) => pattern.test(token));
+      }
+
+      // Load repositories with improved error handling
       async function loadRepositories() {
         const token = document.getElementById("token").value.trim();
         if (!token) {
@@ -485,8 +902,12 @@
           return;
         }
 
-        githubToken = token;
+        if (!validateToken(token)) {
+          showError("Invalid token format. Please check your GitHub token.");
+          return;
+        }
 
+        githubToken = token;
         const loading = document.getElementById("repo-loading");
         const repoList = document.getElementById("repo-list");
 
@@ -494,48 +915,86 @@
         repoList.innerHTML = "";
 
         try {
+          // Test token first
+          await makeGitHubRequest("https://api.github.com/user");
+
           const repos = await makeGitHubRequest(
             "https://api.github.com/user/repos?type=all&sort=updated&per_page=100"
           );
+
+          if (repos.length === 0) {
+            repoList.innerHTML =
+              '<div class="empty-state">No repositories found</div>';
+            loading.classList.add("hidden");
+            return;
+          }
 
           repos.forEach((repo) => {
             const repoItem = document.createElement("div");
             repoItem.className = "repo-item";
             repoItem.onclick = () => selectRepository(repo, repoItem);
 
+            const updatedDate = new Date(repo.updated_at).toLocaleDateString();
+            const language = repo.language || "No language";
+            const stars =
+              repo.stargazers_count > 0 ? `⭐ ${repo.stargazers_count}` : "";
+
             repoItem.innerHTML = `
-                        <div class="repo-name">${repo.name}</div>
-                        <div class="repo-meta">
-                            ${repo.private ? "Private" : "Public"} • 
-                            ${repo.language || "No language"} • 
-                            Updated ${new Date(
-                              repo.updated_at
-                            ).toLocaleDateString()}
-                        </div>
-                    `;
+              <div class="repo-name">${repo.name} ${stars}</div>
+              <div class="repo-meta">
+                <span class="repo-badge ${repo.private ? "private" : ""}">${
+              repo.private ? "🔒 Private" : "🌍 Public"
+            }</span>
+                <span>📝 ${language}</span>
+                <span>🕒 ${updatedDate}</span>
+                ${
+                  repo.description
+                    ? `<div class="repo-description">${repo.description}</div>`
+                    : ""
+                }
+              </div>
+            `;
 
             repoList.appendChild(repoItem);
           });
 
           loading.classList.add("hidden");
+          showMessage(`✅ Loaded ${repos.length} repositories`, "success");
         } catch (error) {
           loading.classList.add("hidden");
-          showError(`Failed to load repositories: ${error.message}`);
+          showError(`❌ Failed to load repositories: ${error.message}`);
         }
       }
 
-      // Select repository
-      function selectRepository(repo, element) {
+      // Select repository with branch detection
+      async function selectRepository(repo, element) {
         document.querySelectorAll(".repo-item").forEach((item) => {
           item.classList.remove("selected");
         });
 
         element.classList.add("selected");
         selectedRepository = repo;
+
+        // Auto-detect default branch
+        try {
+          const branchInput = document.getElementById("branch");
+          branchInput.value = repo.default_branch || "main";
+        } catch (error) {
+          console.warn("Could not detect default branch");
+        }
+
         document.getElementById("load-tree-btn").disabled = false;
+
+        // Clear previous file tree
+        document.getElementById("file-tree").innerHTML = `
+          <div style="text-align: center; color: #656d76; padding: 40px">
+            📁 Repository "${repo.name}" selected<br>
+            <small>Click "Load Files" to browse repository contents</small>
+          </div>
+        `;
       }
 
-      // Load file tree
+      // Enhanced file tree loading with progress
       async function loadFileTree() {
         if (!selectedRepository) return;
 
@@ -545,10 +1004,18 @@
 
         loading.classList.remove("hidden");
         fileTree.innerHTML = "";
+        isProcessing = true;
 
         try {
           const url = `https://api.github.com/repos/${selectedRepository.full_name}/git/trees/${branch}?recursive=1`;
           const treeData = await makeGitHubRequest(url);
+
+          if (!treeData.tree || treeData.tree.length === 0) {
+            fileTree.innerHTML =
+              '<div class="empty-state">No files found in this repository</div>';
+            loading.classList.add("hidden");
+            return;
+          }
 
           repositoryData = {
             owner: selectedRepository.owner.login,
@@ -557,31 +1024,69 @@
             tree: treeData.tree,
           };
 
+          // Calculate comprehensive stats
+          const files = treeData.tree.filter((item) => item.type === "blob");
+          fileStats.total = files.length;
+          fileStats.totalSize = files.reduce(
+            (sum, item) => sum + (item.size || 0),
+            0
+          );
+          fileStats.selectedSize = 0;
+
+          updateStats();
           renderFileTree(treeData.tree);
           loading.classList.add("hidden");
+          isProcessing = false;
 
-          // Auto-expand all folders
+          // Auto-expand all folders after a short delay
           setTimeout(() => {
             expandAll();
-          }, 100);
+          }, 200);
+
+          showMessage(
+            `✅ Loaded ${fileStats.total} files (${formatBytes(
+              fileStats.totalSize
+            )})`,
+            "success"
+          );
         } catch (error) {
           loading.classList.add("hidden");
-          showError(`Failed to load files: ${error.message}`);
+          isProcessing = false;
+          showError(`❌ Failed to load files: ${error.message}`);
         }
       }
 
-      // Render file tree
+      // Update stats display with more information
+      function updateStats() {
+        const statsElements = {
+          "total-files": fileStats.total,
+          "selected-files": selectedFiles.size,
+          "total-size": formatBytes(fileStats.totalSize),
+          "selected-size": formatBytes(fileStats.selectedSize),
+        };
+
+        Object.entries(statsElements).forEach(([id, value]) => {
+          const element = document.getElementById(id);
+          if (element) element.textContent = value;
+        });
+
+        const statsBar = document.getElementById("stats-bar");
+        if (statsBar) statsBar.classList.remove("hidden");
+      }
+
+      // Enhanced file tree rendering with better UX
       function renderFileTree(tree) {
         const fileTree = document.getElementById("file-tree");
         const fileStructure = buildFileStructure(tree);
         fileTree.innerHTML = renderTreeNode(fileStructure);
       }
 
-      // Build file structure
+      // Build optimized file structure
       function buildFileStructure(tree) {
         const structure = {};
+        const sortedTree = tree.sort((a, b) => a.path.localeCompare(b.path));
 
-        tree.forEach((item) => {
+        sortedTree.forEach((item) => {
           const parts = item.path.split("/");
           let current = structure;
 
@@ -594,7 +1099,7 @@
                   type: "blob",
                   path: item.path,
                   sha: item.sha,
-                  size: item.size,
+                  size: item.size || 0,
                   isFile: true,
                 };
               } else {
@@ -624,7 +1129,7 @@
         return structure;
       }
 
-      // Render tree node
+      // Enhanced tree node rendering
       function renderTreeNode(node, level = 0) {
         let html = "";
 
@@ -633,123 +1138,226 @@
           const bIsFile = node[b].isFile;
 
           if (aIsFile === bIsFile) {
-            return a.localeCompare(b);
+            return a.localeCompare(b, undefined, { numeric: true });
           }
           return aIsFile ? 1 : -1;
         });
 
         entries.forEach((key) => {
           const item = node[key];
-          const indent = "margin-left: " + level * 20 + "px;";
+          const indent = level * 20;
 
           if (item.isFile) {
-            const sizeInfo = item.size ? formatBytes(item.size) : "";
+            const sizeInfo = formatBytes(item.size);
             const fileIcon = getFileIcon(item.path);
+            const fileId = `file-${item.path.replace(/[^a-zA-Z0-9]/g, "_")}`;
+
             html += `
-                        <div class="tree-item" style="${indent}">
-                            <div class="tree-file">
-                                <input type="checkbox" class="checkbox" data-path="${item.path}" data-sha="${item.sha}" onchange="updateSelection()">
-                                <span>${fileIcon} ${key}</span>
-                                <span class="file-info">${sizeInfo}</span>
-                            </div>
-                        </div>
-                    `;
+              <div class="tree-item" style="margin-left: ${indent}px;" data-path="${item.path}">
+                <div class="tree-file">
+                  <input type="checkbox" class="checkbox" id="${fileId}" data-path="${item.path}" data-sha="${item.sha}" data-size="${item.size}" onchange="updateSelection()">
+                  <label for="${fileId}" class="file-label">
+                    <span class="file-icon">${fileIcon}</span>
+                    <span class="file-name">${key}</span>
+                    <span class="file-info">${sizeInfo}</span>
+                  </label>
+                </div>
+              </div>
+            `;
           } else {
-            const folderId =
-              "folder-" + Math.random().toString(36).substr(2, 9);
+            const folderId = `folder-${Math.random()
+              .toString(36)
+              .substr(2, 9)}`;
             const folderPath = item.path || key;
             const hasChildren =
               item.children && Object.keys(item.children).length > 0;
+            const itemCount = hasChildren ? countItems(item.children) : 0;
 
             html += `
-                        <div class="tree-item" style="${indent}">
-                            <div class="tree-folder" onclick="toggleFolder('${folderId}')">
-                                <input type="checkbox" class="checkbox folder-checkbox" data-folder="${folderPath}" onchange="updateFolderSelection(this)" onclick="event.stopPropagation()">
-                                <span>📁 ${key}/</span>
-                                ${
-                                  hasChildren
-                                    ? '<span class="file-info">(' +
-                                      countFiles(item.children) +
-                                      " items)</span>"
-                                    : ""
-                                }
-                            </div>
-                            <div class="tree-children" id="${folderId}">
-                                ${
-                                  hasChildren
-                                    ? renderTreeNode(item.children, level + 1)
-                                    : ""
-                                }
-                            </div>
-                        </div>
-                    `;
+              <div class="tree-item" style="margin-left: ${indent}px;">
+                <div class="tree-folder" onclick="toggleFolder('${folderId}')">
+                  <input type="checkbox" class="checkbox folder-checkbox" data-folder="${folderPath}" onchange="updateFolderSelection(this)" onclick="event.stopPropagation()">
+                  <span class="folder-toggle">📁</span>
+                  <span class="folder-name">${key}/</span>
+                  ${
+                    hasChildren
+                      ? `<span class="file-info">(${itemCount.files} files, ${itemCount.folders} folders)</span>`
+                      : ""
+                  }
+                </div>
+                <div class="tree-children" id="${folderId}">
+                  ${hasChildren ? renderTreeNode(item.children, level + 1) : ""}
+                </div>
+              </div>
+            `;
           }
         });
 
         return html;
       }
 
-      // Helper functions
-      function countFiles(node) {
-        let count = 0;
+      // Enhanced helper functions
+      function countItems(node) {
+        let files = 0,
+          folders = 0;
+
         Object.keys(node).forEach((key) => {
           if (node[key].isFile) {
-            count++;
-          } else if (node[key].children) {
-            count += countFiles(node[key].children);
+            files++;
+          } else {
+            folders++;
+            if (node[key].children) {
+              const subCount = countItems(node[key].children);
+              files += subCount.files;
+              folders += subCount.folders;
+            }
           }
         });
-        return count;
+
+        return { files, folders };
       }
 
       function getFileIcon(path) {
         const ext = path.split(".").pop().toLowerCase();
+        const basename = path.split("/").pop().toLowerCase();
+
+        // Special files
+        const specialFiles = {
+          "readme.md": "📖",
+          license: "📜",
+          dockerfile: "🐳",
+          "package.json": "📦",
+          "yarn.lock": "🧶",
+          "package-lock.json": "🔒",
+          ".gitignore": "🙈",
+          ".env": "⚙️",
+          makefile: "🔨",
+        };
+
+        if (specialFiles[basename]) {
+          return specialFiles[basename];
+        }
+
+        // Extension-based icons
         const iconMap = {
+          // Code files
           js: "🟨",
-          ts: "🔷",
           jsx: "⚛️",
+          ts: "🔷",
           tsx: "⚛️",
+          py: "🐍",
+          java: "☕",
+          cpp: "⚡",
+          c: "⚡",
+          cs: "🔷",
+          php: "🐘",
+          rb: "💎",
+          go: "🐹",
+          rust: "🦀",
+          rs: "🦀",
+          swift: "🍎",
+          kt: "🟣",
+
+          // Web files
           html: "🌐",
           css: "🎨",
+          scss: "🎨",
+          sass: "🎨",
+          vue: "💚",
+          svelte: "🧡",
+          angular: "🔴",
+
+          // Data files
           json: "📄",
+          xml: "📄",
+          yaml: "📄",
+          yml: "📄",
+          csv: "📊",
+          sql: "🗃️",
+          db: "🗃️",
+
+          // Documents
           md: "📝",
+          txt: "📝",
+          pdf: "📕",
+          doc: "📘",
+          docx: "📘",
+
+          // Images
           png: "🖼️",
           jpg: "🖼️",
+          jpeg: "🖼️",
           gif: "🖼️",
-          svg: "🖼️",
+          svg: "🎨",
+          ico: "🖼️",
+          webp: "🖼️",
+
+          // Archives
           zip: "📦",
-          env: "⚙️",
+          rar: "📦",
+          tar: "📦",
+          gz: "📦",
+
+          // Config
+          ini: "⚙️",
+          conf: "⚙️",
+          config: "⚙️",
+          toml: "⚙️",
+
+          // Others
+          log: "📋",
+          lock: "🔒",
+          key: "🔑",
+          pem: "🔑",
         };
+
         return iconMap[ext] || "📄";
       }
 
       function formatBytes(bytes) {
         if (bytes === 0) return "0 B";
         const k = 1024;
-        const sizes = ["B", "KB", "MB", "GB"];
+        const sizes = ["B", "KB", "MB", "GB", "TB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
       }
 
       function toggleFolder(folderId) {
         const folder = document.getElementById(folderId);
-        folder.classList.toggle("collapsed");
+        if (folder) {
+          folder.classList.toggle("collapsed");
+
+          // Update folder icon
+          const folderElement = folder.previousElementSibling;
+          const toggleIcon = folderElement?.querySelector(".folder-toggle");
+          if (toggleIcon) {
+            toggleIcon.textContent = folder.classList.contains("collapsed")
+              ? "📁"
+              : "📂";
+          }
+        }
       }
 
+      // Enhanced selection management
       function updateSelection() {
         selectedFiles.clear();
+        fileStats.selectedSize = 0;
 
         const fileCheckboxes = document.querySelectorAll("input[data-path]");
         fileCheckboxes.forEach((checkbox) => {
           if (checkbox.checked) {
+            const size = parseInt(checkbox.dataset.size) || 0;
             selectedFiles.add({
               path: checkbox.dataset.path,
               sha: checkbox.dataset.sha,
+              size: size,
             });
+            fileStats.selectedSize += size;
           }
         });
 
         updateSelectionDisplay();
+        updateStats();
       }
 
       function updateFolderSelection(folderCheckbox) {
@@ -758,12 +1366,14 @@
         const childrenContainer = folderElement.querySelector(".tree-children");
 
         if (childrenContainer) {
+          // Update all file checkboxes in this folder
           const childFileCheckboxes =
             childrenContainer.querySelectorAll("input[data-path]");
           childFileCheckboxes.forEach((checkbox) => {
             checkbox.checked = isChecked;
           });
 
+          // Update all nested folder checkboxes
           const nestedFolderCheckboxes =
             childrenContainer.querySelectorAll(".folder-checkbox");
           nestedFolderCheckboxes.forEach((checkbox) => {
@@ -776,21 +1386,41 @@
 
       function updateSelectionDisplay() {
         const count = selectedFiles.size;
-        document.getElementById("selected-count").textContent = count;
-
         const selectionInfo = document.getElementById("selection-info");
         const deleteBtn = document.getElementById("delete-btn");
 
-        if (count > 0) {
-          selectionInfo.classList.remove("hidden");
-          deleteBtn.disabled = false;
-        } else {
-          selectionInfo.classList.add("hidden");
-          deleteBtn.disabled = true;
+        if (selectionInfo) {
+          document.getElementById("selected-count").textContent = count;
+
+          if (count > 0) {
+            selectionInfo.classList.remove("hidden");
+            selectionInfo.innerHTML = `
+              <strong>Selected:</strong> ${count} files (${formatBytes(
+              fileStats.selectedSize
+            )})
+              <div style="margin-top: 4px; font-size: 12px; opacity: 0.8;">
+                ${((count / fileStats.total) * 100).toFixed(
+                  1
+                )}% of repository files
+              </div>
+            `;
+          } else {
+            selectionInfo.classList.add("hidden");
+          }
+        }
+
+        if (deleteBtn) {
+          deleteBtn.disabled = count === 0 || isProcessing;
+          deleteBtn.innerHTML = isProcessing
+            ? "⏳ Processing..."
+            : `🗑️ Delete ${count} File${count !== 1 ? "s" : ""}`;
         }
       }
 
+      // Quick selection functions
       function selectAll() {
+        if (isProcessing) return;
+
         const allCheckboxes = document.querySelectorAll(
           'input[type="checkbox"]'
         );
@@ -798,9 +1428,12 @@
           checkbox.checked = true;
         });
         updateSelection();
+        showMessage(`✅ Selected all ${fileStats.total} files`, "success");
       }
 
       function clearSelection() {
+        if (isProcessing) return;
+
         const allCheckboxes = document.querySelectorAll(
           'input[type="checkbox"]'
         );
@@ -808,6 +1441,7 @@
           checkbox.checked = false;
         });
         updateSelection();
+        showMessage("🔄 Selection cleared", "info");
       }
 
       function expandAll() {
@@ -815,27 +1449,64 @@
         allFolders.forEach((folder) => {
           folder.classList.remove("collapsed");
         });
+
+        // Update all folder icons
+        const folderToggles = document.querySelectorAll(".folder-toggle");
+        folderToggles.forEach((toggle) => {
+          toggle.textContent = "📂";
+        });
       }
 
-      // Delete selected files
+      function collapseAll() {
+        const allFolders = document.querySelectorAll(".tree-children");
+        allFolders.forEach((folder) => {
+          folder.classList.add("collapsed");
+        });
+
+        // Update all folder icons
+        const folderToggles = document.querySelectorAll(".folder-toggle");
+        folderToggles.forEach((toggle) => {
+          toggle.textContent = "📁";
+        });
+      }
+
+      // Enhanced file deletion with better progress tracking
       async function deleteSelectedFiles() {
         if (selectedFiles.size === 0) {
           showError("No files selected for deletion");
           return;
         }
 
-        const commitMessage =
-          document.getElementById("commit-message").value.trim() ||
-          "Delete selected files";
-
-        if (
-          !confirm(
-            `Delete ${selectedFiles.size} file(s)? This cannot be undone!`
-          )
-        ) {
+        if (isProcessing) {
+          showError("Another operation is in progress");
           return;
         }
 
+        const commitMessage =
+          document.getElementById("commit-message").value.trim() ||
+          "Delete selected files via GitHub File Ninja";
+        const fileCount = selectedFiles.size;
+        const totalSize = fileStats.selectedSize;
+
+        const confirmMessage = `⚠️ DELETE CONFIRMATION ⚠️
+
+You are about to delete ${fileCount} file${
+          fileCount !== 1 ? "s" : ""
+        } (${formatBytes(totalSize)}) from:
+Repository: ${selectedRepository.name}
+Branch: ${repositoryData.branch}
+
+This action CANNOT be undone!
+
+Type "DELETE" to confirm:`;
+
+        const userInput = prompt(confirmMessage);
+        if (userInput !== "DELETE") {
+          showMessage("❌ Deletion cancelled", "info");
+          return;
+        }
+
+        isProcessing = true;
         const statusPanel = document.getElementById("status-panel");
         statusPanel.classList.remove("hidden");
         statusPanel.innerHTML = "";
@@ -843,66 +1514,111 @@
         const filesToDelete = Array.from(selectedFiles);
         let successCount = 0;
         let errorCount = 0;
+        let processedSize = 0;
 
-        for (const file of filesToDelete) {
-          const statusId = addStatusItem(file.path, "pending", "Deleting...");
+        // Add initial status
+        addStatusItem(
+          "STARTING",
+          "pending",
+          `Starting deletion of ${fileCount} files...`
+        );
+
+        for (let i = 0; i < filesToDelete.length; i++) {
+          const file = filesToDelete[i];
+          const progress = `(${i + 1}/${fileCount})`;
+          const statusId = addStatusItem(
+            file.path,
+            "pending",
+            `${progress} Deleting...`
+          );
 
           try {
             await deleteFile(file.path, file.sha, commitMessage);
-            updateStatusItem(statusId, "success", "Deleted successfully");
+            updateStatusItem(
+              statusId,
+              "success",
+              `${progress} ✅ Deleted successfully`
+            );
             successCount++;
+            processedSize += file.size || 0;
           } catch (error) {
-            updateStatusItem(statusId, "error", `Failed: ${error.message}`);
+            updateStatusItem(
+              statusId,
+              "error",
+              `${progress} ❌ Failed: ${error.message}`
+            );
             errorCount++;
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          // Add delay to prevent rate limiting
+          if (i < filesToDelete.length - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 250));
+          }
         }
+
+        // Final summary
+        const summaryMessage = `🏁 DELETION COMPLETE
+✅ Successful: ${successCount} files
+❌ Failed: ${errorCount} files
+📊 Data removed: ${formatBytes(processedSize)}`;
 
         addStatusItem(
           "SUMMARY",
           successCount > 0 ? "success" : "error",
-          `Completed: ${successCount} deleted, ${errorCount} failed`
+          summaryMessage
         );
 
+        isProcessing = false;
+        updateSelectionDisplay();
+
         if (successCount > 0) {
+          showMessage(
+            `🎉 Successfully deleted ${successCount} files!`,
+            "success"
+          );
+
+          // Reload file tree after successful deletions
           setTimeout(() => {
             loadFileTree();
           }, 2000);
+        } else {
+          showMessage("❌ No files were deleted", "error");
         }
       }
 
       async function deleteFile(path, sha, message) {
         const url = `https://api.github.com/repos/${repositoryData.owner}/${repositoryData.repo}/contents/${path}`;
 
-        await makeGitHubRequest(url, {
+        return await makeGitHubRequest(url, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: message,
+            message: `${message}\n\nDeleted: ${path}`,
             sha: sha,
             branch: repositoryData.branch,
           }),
         });
       }
 
+      // Enhanced status management
       function addStatusItem(filename, type, message) {
         const statusPanel = document.getElementById("status-panel");
-        const statusId =
-          "status-" +
-          Date.now() +
-          "-" +
-          Math.random().toString(36).substr(2, 5);
+        const statusId = `status-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 5)}`;
 
         const statusElement = document.createElement("div");
         statusElement.className = `status-item status-${type}`;
         statusElement.id = statusId;
         statusElement.innerHTML = `
-                <strong>${filename}</strong>
-                <span>${message}</span>
-            `;
+          <div class="status-content">
+            <strong class="status-file">${filename}</strong>
+            <span class="status-message">${message}</span>
+            <small class="status-time">${new Date().toLocaleTimeString()}</small>
+          </div>
+        `;
 
         statusPanel.appendChild(statusElement);
         statusPanel.scrollTop = statusPanel.scrollHeight;
@@ -914,34 +1630,149 @@
         const element = document.getElementById(statusId);
         if (element) {
           element.className = `status-item status-${type}`;
-          const messageSpan = element.querySelector("span");
-          if (messageSpan) {
-            messageSpan.textContent = message;
-          }
+          const messageSpan = element.querySelector(".status-message");
+          const timeSpan = element.querySelector(".status-time");
+
+          if (messageSpan) messageSpan.textContent = message;
+          if (timeSpan) timeSpan.textContent = new Date().toLocaleTimeString();
         }
       }
 
-      function showError(message) {
-        const existingErrors = document.querySelectorAll(".error");
-        existingErrors.forEach((error) => error.remove());
+      // Enhanced message system
+      function showMessage(message, type = "info", duration = 5000) {
+        const existingMessages = document.querySelectorAll(`.message-${type}`);
+        existingMessages.forEach((msg) => msg.remove());
 
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error";
-        errorDiv.textContent = message;
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message message-${type}`;
+        messageDiv.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 12px 16px;
+          border-radius: 8px;
+          color: white;
+          font-weight: 500;
+          z-index: 1000;
+          max-width: 400px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          animation: slideIn 0.3s ease-out;
+        `;
 
-        document.body.appendChild(errorDiv);
+        const colors = {
+          success: "#10b981",
+          error: "#ef4444",
+          info: "#3b82f6",
+          warning: "#f59e0b",
+        };
+
+        messageDiv.style.backgroundColor = colors[type] || colors.info;
+        messageDiv.textContent = message;
+
+        document.body.appendChild(messageDiv);
 
         setTimeout(() => {
-          if (errorDiv.parentNode) {
-            errorDiv.parentNode.removeChild(errorDiv);
-          }
-        }, 5000);
+          messageDiv.style.animation = "slideOut 0.3s ease-in forwards";
+          setTimeout(() => {
+            if (messageDiv.parentNode) {
+              messageDiv.parentNode.removeChild(messageDiv);
+            }
+          }, 300);
+        }, duration);
       }
 
-      // Initialize
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("GitHub File Deleter loaded successfully");
+      function showError(message) {
+        showMessage(message, "error");
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case "a":
+              e.preventDefault();
+              selectAll();
+              break;
+            case "d":
+              e.preventDefault();
+              clearSelection();
+              break;
+            case "Enter":
+              if (selectedFiles.size > 0) {
+                e.preventDefault();
+                deleteSelectedFiles();
+              }
+              break;
+          }
+        }
+
+        if (e.key === "Escape") {
+          clearSelection();
+        }
       });
-    </script>
-  </body>
-</html>
+
+      // Enhanced initialization
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("🥷 GitHub File Ninja loaded successfully!");
+
+        // Add CSS animations
+        const style = document.createElement("style");
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+          }
+          .file-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            flex: 1;
+          }
+          .status-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+          .status-time {
+            opacity: 0.7;
+            font-size: 11px;
+          }
+          .empty-state {
+            text-align: center;
+            color: #656d76;
+            padding: 40px;
+            font-style: italic;
+          }
+          .repo-description {
+            font-size: 12px;
+            color: #656d76;
+            margin-top: 4px;
+            font-style: italic;
+          }
+        `;
+        document.head.appendChild(style);
+
+        // Show welcome message
+        showMessage(
+          "🥷 Welcome to GitHub File Ninja! Enter your token to get started.",
+          "info",
+          3000
+        );
+      });
+
+      // Auto-save token (optional - remove if not desired)
+      document.getElementById("token")?.addEventListener("input", function (e) {
+        // Note: In production, never store tokens in localStorage for security
+        // This is just for development convenience
+        if (e.target.value.trim()) {
+          console.log("Token entered");
+        }
+      });
+    </script></body
+  ></html
+>
